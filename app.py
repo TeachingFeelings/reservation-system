@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-import sqlite3
+from database import get_connection
 import calendar
 
 app = Flask(__name__)
@@ -57,7 +57,7 @@ def index():
     "%Y-%m-%d"
     ).strftime("%a")
 
-    conn = sqlite3.connect("reservation.db")
+    conn = get_connection()
     cur = conn.cursor()
 
     cur.execute("""
@@ -150,7 +150,7 @@ def add_reservation():
         "status": "invalid_time"
        })
 
-    conn = sqlite3.connect("reservation.db")
+    conn = get_connection()
     cur = conn.cursor()
 
     # 检查冲突
@@ -216,7 +216,7 @@ def update_reservation():
         "status": "invalid_time"
     })
 
-    conn = sqlite3.connect("reservation.db")
+    conn = get_connection()
     cur = conn.cursor()
 
     # 冲突检测（排除自己）
@@ -281,7 +281,7 @@ def delete_reservation():
 
     data = request.get_json()
 
-    conn = sqlite3.connect("reservation.db")
+    conn = get_connection()
     cur = conn.cursor()
 
     # 读取该预约的密码
