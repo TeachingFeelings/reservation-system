@@ -869,82 +869,35 @@ document.addEventListener(
     function () {
 
         if (!draggingReservation) {
-        mouseDownReservation = null;
-        return;
-        }
-
-        if (!draggingReservation) {
             mouseDownReservation = null;
             return;
         }
 
-        fetch(
-            "/update_reservation",
-            {
-                method: "POST",
+        editingReservation = {
+            id: draggingReservation.dataset.id,
+            instrument: draggingReservation.parentElement.dataset.instrument
+        };
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+        document.getElementById("modal-title").innerText =
+            "Modify this reservation?";
 
-                body: JSON.stringify({
+        document.getElementById("user-select").value =
+            draggingReservation.dataset.user;
 
-                    id:
-                        draggingReservation.dataset.id,
+        document.getElementById("color-select").value =
+            draggingReservation.dataset.color;
 
-                    instrument:
-                        draggingReservation
-                            .parentElement
-                            .dataset
-                            .instrument,
+        document.getElementById("start-time").value =
+            minuteToTime(parseInt(draggingReservation.dataset.start));
 
-                    user:
-                        draggingReservation
-                            .dataset
-                            .user,
+        document.getElementById("end-time").value =
+            minuteToTime(parseInt(draggingReservation.dataset.end));
 
-                    color:
-                        draggingReservation
-                            .dataset
-                            .color,
+        document.getElementById("comment").value =
+            draggingReservation.dataset.comment || "";
 
-                    start:
-                        parseInt(
-                            draggingReservation
-                                .dataset
-                                .start
-                        ),
-
-                    end:
-                        parseInt(
-                            draggingReservation
-                                .dataset
-                                .end
-                        ),
-
-                    date:
-                        document.body.dataset.date,
-
-                    room:
-                        document.body.dataset.room
-                })
-            }
-        )
-            .then(r => r.json())
-            .then(data => {
-
-                if (data.status === "conflict") {
-
-                    alert("Time conflict");
-
-                    location.reload();
-
-                    return;
-                }
-
-                location.reload();
-            });
+        document.getElementById("reservation-modal").style.display =
+            "flex";
 
         draggingReservation = null;
         mouseDownReservation = null;
