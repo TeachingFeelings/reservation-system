@@ -79,7 +79,7 @@ def index():
 
     for d, c in cur.fetchall():
         print("DEBUG:", type(d), d, c)
-        counts[d] = c
+        counts[d.isoformat()] = c
 
     cur.execute("""
         SELECT id,
