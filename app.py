@@ -63,7 +63,7 @@ def index():
     cur.execute("""
        SELECT instrument
        FROM room_instruments
-       WHERE room = ?
+       WHERE room = %s
     """, (selected_room,))
 
     instrument_list = [r[0] for r in cur.fetchall()]
@@ -78,6 +78,7 @@ def index():
     counts = {}
 
     for d, c in cur.fetchall():
+        print("DEBUG:", type(d), d, c)
         counts[d] = c
 
     cur.execute("""
@@ -90,8 +91,8 @@ def index():
         password,
         comment
         FROM reservations
-        WHERE date = ?
-        AND room = ?
+        WHERE date = %s
+        AND room = %s
     """, (selected_date,selected_room))
 
     rows = cur.fetchall()
@@ -157,10 +158,10 @@ def add_reservation():
     cur.execute("""
         SELECT *
         FROM reservations
-        WHERE instrument = ?
-        AND date = ?
-        AND start_minute < ?
-        AND end_minute > ?
+        WHERE instrument = %s
+        AND date = %s
+        AND start_minute < %s
+        AND end_minute > %s
     """,
     (
         data["instrument"],
@@ -183,7 +184,7 @@ def add_reservation():
     cur.execute("""
         INSERT INTO reservations
         (instrument,user,start_minute,end_minute,color,date,room,password,comment)
-        VALUES (?,?,?,?,?,?,?,?,?)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """,
     (
         data["instrument"],
@@ -224,12 +225,12 @@ def update_reservation():
     cur.execute("""
         SELECT *
         FROM reservations
-        WHERE instrument = ?
-        AND date = ?
-        AND id != ?
-        AND room = ?
-        AND start_minute < ?
-        AND end_minute > ?
+        WHERE instrument = %s
+        AND date = %s
+        AND id != %s
+        AND room = %s
+        AND start_minute < %s
+        AND end_minute > %s
     """,
     (
         data["instrument"],
@@ -253,12 +254,12 @@ def update_reservation():
     cur.execute("""
         UPDATE reservations
         SET
-            user = ?,
-            start_minute = ?,
-            end_minute = ?,
-            color = ?,
-            comment = ?
-        WHERE id = ?
+            user = %s,
+            start_minute = %s,
+            end_minute = %s,
+            color = %s,
+            comment = %s
+        WHERE id = %s
     """,
     (
         data["user"],
@@ -288,7 +289,7 @@ def delete_reservation():
     cur.execute("""
         SELECT password
         FROM reservations
-        WHERE id = ?
+        WHERE id = %s
     """,
     (data["id"],))
 
@@ -317,7 +318,7 @@ def delete_reservation():
     # 密码正确（或没有密码）
     cur.execute("""
         DELETE FROM reservations
-        WHERE id = ?
+        WHERE id = %s
     """,
     (data["id"],))
 
