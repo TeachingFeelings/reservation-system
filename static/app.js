@@ -869,6 +869,11 @@ document.addEventListener(
     function () {
 
         if (!draggingReservation) {
+        mouseDownReservation = null;
+        return;
+        }
+
+        if (!draggingReservation) {
             mouseDownReservation = null;
             return;
         }
