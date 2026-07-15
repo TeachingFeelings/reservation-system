@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Reservation System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+
+<body data-date="{{ selected_date }}" data-room="{{ selected_room }}">
+
+    <h1>Inoue Lab Reservation System</h1>
+
+    <div class="date-nav">
+
+        <button id="prev-day" class="nav-btn">◀</button>
+
+        <span id="current-date">
+            {{ selected_date }} ({{ weekday }})
+        </span>
+
+        <button id="next-day" class="nav-btn">▶</button>
+
+        <button id="today-btn">
+            Today
+        </button>
+
+        <select id="roomSelect">
+            <option value="room1">6S05_wet_lab</option>
+            <option value="room2">6S04_cell_culture</option>
+            <option value="room3">6S03_incubator</option>
+            <option value="room4">ISSP_A463</option>
+            <option value="room5">B1</option>
+        </select>
+
+    </div>
+
+    <div class="calendar-box">
+
+        <div class="calendar-header">
+
+            <button id="prev-month" class="nav-btn">◀</button>
+
+            <span>
+                {{ current_year }}-{{ "%02d"|format(current_month) }}
+            </span>
+
+            <button id="next-month" class="nav-btn">▶</button>
+
+        </div>
+
+        <table class="calendar-table">
+
+            <tr>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+            </tr>
+
+            {% for week in calendar_data %}
+
+            <tr>
+
+                {% for day in week %}
+
+                <td>
+
+                    {% if day != 0 %}
+
+                    {% set day_date =
+                    current_year|string ~ '-' ~
+                    '%02d'|format(current_month) ~ '-' ~
+                    '%02d'|format(day) %}
+
+                    {% set count =
+                    reservation_counts.get(day_date, 0) %}
+
+                    {% if count == 0 %}
+                    {% set level = 0 %}
+                    {% elif count == 1 %}
+                    {% set level = 1 %}
+                    {% elif count == 2 %}
+                    {% set level = 2 %}
+                    {% elif count == 3 %}
+                    {% set level = 3 %}
+                    {% elif count == 4 %}
+                    {% set level = 4 %}
+                    {% elif count <= 6 %}
+                    {% set level = 5 %}
+                    {% elif count <= 8 %}
+                    {% set level = 6 %}
+                    {% elif count <= 10 %}
+                    {% set level = 7 %}
+                    {% else %}
+                    {% set level = 8 %}
+                    {% endif %}
+
+                    <a href="/?date={{ day_date }}"
+                       title="{{ holiday_dates.get(day_date, '') }}"
+                       class="
+                       day-cell
+                       level-{{ [count,4]|min }}
+                       {% if selected_date == day_date %}
+                       selected-day
+                       {% endif %}
+                       {% if day_date in holiday_dates %}
+                       holiday
+                       {% endif %}
+                       ">
+
+                        {{ day }}
+
+                    </a>
+
+                    {% endif %}
+
+                </td>
+
+                {% endfor %}
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+
+
+
+
+    <div id="scheduler">
+
+        <!-- 表头 -->
+
+        <div class="header-row">
+
+            <div class="instrument-header">
+                Instrument
+            </div>
+
+            <div class="time-header">
+
+                {% for h in range(0,24) %}
+                <div class="hour">
+                    {{ h }}
+                </div>
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% for instrument in instrument_list %}
+
+        <div class="resource-row">
+
+            <div class="instrument">
+                {{ instrument }}
+            </div>
+
+            <div class="timeline"
+                 data-instrument="{{ instrument }}">
+
+                {% for r in reservations %}
+                {% if r.instrument == instrument %}
+
+                <div class="reservation"
+                     title="{{ r.comment }}"
+                     data-id="{{ r.id }}"
+                     data-user="{{ r.user }}"
+                     data-start="{{ r.start }}"
+                     data-end="{{ r.end }}"
+                     data-color="{{ r.color }}"
+                     data-comment="{{ r.comment }}"
+                     style="
+                background:{{ r.color }};
+             ">
+
+                    <div>{{ r.user }}</div>
+
+                    {% if (r.end-r.start) >= 30 %}
+                    <div>
+                        {{ "%02d:%02d"|format(r.start//60, r.start%60) }}
+                        -
+                        {{ "%02d:%02d"|format(r.end//60, r.end%60) }}
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+                {% endfor %}
+
+            </div>
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    <div id="reservation-modal" class="modal">
+
+        <div class="modal-content">
+
+            <h3 id="modal-title">
+                New Reservation
+            </h3>
+
+            <label>User</label>
+
+            <select id="user-select">
+
+                <option value="Nagata/永田">Nagata</option>
+                <option value="Inoue/井上">Inoue</option>
+                <option value="Kato/加藤">Kato</option>
+                <option value="Maeda/前田">Maeda</option>
+                <option value="Konno/今野">Konno</option>
+                <option value="Lyu/呂">Lyu</option>
+                <option value="Li/李">Li</option>
+                <option value="Zhao/趙">Zhao</option>
+                <option value="Zhang/張">Zhang</option>
+                <option value="Takahashi/髙橋">Takahashi</option>
+                <option value="Hashimoto/橋本">Hashimoto</option>
+
+            </select>
+
+            <label>Password (optional)</label>
+
+            <input type="password"
+                   id="password"
+                   placeholder="Leave blank if not needed">
+
+            <label>Color</label>
+
+            <select id="color-select">
+
+                <option value="#4a89dc">🟦 Blue</option>
+                <option value="#3498db">🔵 Sky Blue</option>
+                <option value="#1abc9c">🩵 Turquoise</option>
+                <option value="#16a085">🟢 Teal</option>
+
+                <option value="#2ecc71">🟩 Green</option>
+                <option value="#27ae60">🌲 Dark Green</option>
+                <option value="#f1c40f">🟨 Yellow</option>
+                <option value="#f39c12">🟧 Orange</option>
+
+                <option value="#e67e22">🍊 Dark Orange</option>
+                <option value="#d35400">🟫 Brown</option>
+                <option value="#e74c3c">🟥 Red</option>
+                <option value="#c0392b">❤️ Dark Red</option>
+
+                <option value="#9b59b6">🟪 Purple</option>
+                <option value="#8e44ad">💜 Dark Purple</option>
+                <option value="#7f8c8d">⬜ Gray</option>
+                <option value="#34495e">⚫ Dark Gray</option>
+
+            </select>
+
+            <label>Start</label>
+
+            <input type="time"
+                   id="start-time"
+                   step="600">
+
+            <label>End</label>
+
+            <input type="time"
+                   id="end-time"
+                   step="600">
+
+
+            <label>Comment</label>
+
+             <textarea id="comment"
+                   rows="3"
+                   maxlength="200"
+                   placeholder="Optional"></textarea>
+
+            <div class="modal-buttons">
+
+                <button id="save-btn">
+                    Save
+                </button>
+
+                <button id="delete-btn">
+                    Delete
+                </button>
+
+                <button id="cancel-btn">
+                    Cancel
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
