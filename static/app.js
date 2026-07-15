@@ -21,6 +21,8 @@ let movedReservation = false;
 let mouseDownReservation = null;
 let longPressTimer = null;
 let longPressTriggered = false;
+let pendingStart = 0;
+let pendingEnd = 0;
 
 
 // =========================
