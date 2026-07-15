@@ -455,6 +455,20 @@ document
     .getElementById("cancel-btn")
     .addEventListener("click", () => {
 
+if (editingReservation) {
+
+    const reservation =
+        document.querySelector(
+            `.reservation[data-id="${editingReservation.id}"]`
+        );
+
+    reservation.style.left =
+        originalStart * PIXELS_PER_MINUTE + "px";
+
+    reservation.style.width =
+        (originalEnd - originalStart) * PIXELS_PER_MINUTE + "px";
+}
+        
         document
             .getElementById(
                 "reservation-modal"
@@ -856,11 +870,8 @@ document.addEventListener(
             ((newStart - 0) * PIXELS_PER_MINUTE)
             + "px";
 
-        draggingReservation.dataset.start =
-            newStart;
-
-        draggingReservation.dataset.end =
-            newEnd;
+        pendingStart = newStart;
+        pendingEnd = newEnd;
     }
 );
 
@@ -888,10 +899,10 @@ document.addEventListener(
             draggingReservation.dataset.color;
 
         document.getElementById("start-time").value =
-            minuteToTime(parseInt(draggingReservation.dataset.start));
+            minuteToTime(pendingStart);
 
         document.getElementById("end-time").value =
-            minuteToTime(parseInt(draggingReservation.dataset.end));
+            minuteToTime(pendingEnd);
 
         document.getElementById("comment").value =
             draggingReservation.dataset.comment || "";
