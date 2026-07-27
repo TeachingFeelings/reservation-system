@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Administrator Panel</title>
+
+    <style>
+
+        body {
+            font-family: Arial,sans-serif;
+            margin: 40px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Administrator Panel</h1>
+
+        <div class="card">
+            <h3>Members</h3>
+            <p>{{ member_count }}</p>
+
+            <a href="/admin/users">
+                Manage
+            </a>
+
+            <br>
+
+
+
+        </div>
+
+        <div class="card">
+            <h3>Rooms</h3>
+            <p>{{ room_count }}</p>
+
+            <a href="/admin/rooms">
+                Manage Rooms
+            </a>
+        </div>
+
+        <div class="card">
+            <h3>Instruments</h3>
+            <p>{{ instrument_count }}</p>
+
+            <a href="/admin/instruments">
+                Manage Instruments
+            </a>
+        </div>
+
+        <div class="card">
+            <h3>Reservations</h3>
+            <p>{{ reservation_count }}</p>
+
+            <!--
+        <a href="/admin/reservations">
+            View Reservations
+        </a>
+        -->
+        </div>
+
+            <br>
+            <a href="/logout">
+                <button>Logout</button>
+            </a>
+
+        </div>
+
+    </body>
+
+    <br>
+    <br>
+
+
+
+
+
+    </html>

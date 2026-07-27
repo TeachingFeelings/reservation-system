@@ -1,0 +1,83 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+
+<h2>Rooms</h2>
+
+<table>
+
+    <tr>
+        <th>Room</th>
+        <th>Rename</th>
+        <th>Delete</th>
+    </tr>
+
+    {% for r in rooms %}
+
+    <tr>
+
+        <td>
+            <form action="/admin/rooms/update" method="post">
+
+                <input type="hidden"
+                       name="id"
+                       value="{{ r['id'] }}">
+
+                <input type="text"
+                       name="name"
+                       value="{{ r['name'] }}">
+
+        </td>
+
+        <td>
+
+            <button type="submit"
+                    onclick="return confirm('Save changes?')">
+                Save
+            </button>
+
+            </form>
+
+        </td>
+
+        <td>
+
+            <form action="/admin/rooms/delete"
+                  method="post">
+
+                <input type="hidden"
+                       name="id"
+                       value="{{ r['id'] }}">
+
+                <button type="submit"
+                        onclick="return confirm('Delete this room?')">
+                    Delete
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<hr>
+
+<h3>Add Room</h3>
+
+<form action="/admin/rooms/add"
+      method="post">
+
+    <input name="name"
+           placeholder="Room name">
+
+    <button>
+        Add
+    </button>
+
+</form>
+
+{% endblock %}
